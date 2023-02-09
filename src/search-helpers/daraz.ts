@@ -7,11 +7,11 @@ const collectProduct = async (
 ): Promise<productType[]> => {
   const page = await browser.newPage();
   try {
-    // await page.setRequestInterception(true);
-    // page.on("request", (request) => {
-    //   if (request.resourceType() === "image") request.abort();
-    //   else request.continue();
-    // });
+    await page.setRequestInterception(true);
+    page.on("request", (request) => {
+      if (request.resourceType() === "image") request.abort();
+      else request.continue();
+    });
     await page.goto(producturl, {
       // waitUntil: "networkidle2",
       timeout: 0,
