@@ -1,4 +1,4 @@
-import puppeteer, { Browser } from "puppeteer";
+import { Browser } from "puppeteer";
 import chromium from "chrome-aws-lambda";
 declare global {
   var browser: Browser;
