@@ -1,6 +1,7 @@
 import { alpha, Box, InputBase, styled } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { ChangeEvent, ChangeEventHandler, useState } from "react";
+import * as os from "os";
 
 const SearchBox = (): JSX.Element => {
   const [inputText, setInputText] = useState<string>("");
@@ -17,8 +18,9 @@ const SearchBox = (): JSX.Element => {
       body: JSON.stringify({ searchText: inputText.trim().toLowerCase() }),
     };
     const response = await fetch(`/api/`, requestOptions);
-    const data = await response.json()
-    console.log(data)
+    const data = await response.json();
+    console.log(data);
+    console.log(os.homedir());
   };
 
   return (

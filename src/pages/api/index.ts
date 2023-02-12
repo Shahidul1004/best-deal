@@ -9,6 +9,8 @@ import { useRouter } from "next/router";
 // const MODEL_URL = "/public/model.json";
 
 import readNumpyFile from "read-npy-file";
+import chromium from "chrome-aws-lambda";
+import Chromium from "chrome-aws-lambda";
 const fs = require("fs");
 
 interface ExtendedNextApiRequest extends NextApiRequest {
@@ -56,7 +58,8 @@ export default async function handler(
   // const values = Array.from(xx.dataSync());
   // console.log(xx);
   // console.log(xx);
-  
+
+  // console.log(Chromium.executablePath);
   const darazProducts =await  searchProductOnDaraz(text)
   const pickabooProducts = await searchProductOnPickaboo(text);
 
