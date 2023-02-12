@@ -1,10 +1,18 @@
 import puppeteer, { Browser } from "puppeteer";
+import chromium from "chrome-aws-lambda";
 declare global {
   var browser: Browser;
 }
 
 export const browser =
-  global.browser || (await puppeteer.launch({ slowMo: 500 }));
+  global.browser ||
+  (await chromium.puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+    ignoreHTTPSErrors: true,
+  }));
 if (process.env.NODE_ENV !== "production") {
   global.browser = browser;
 }
