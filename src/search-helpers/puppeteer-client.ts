@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Browser } from "puppeteer-core";
+// import { Browser } from "puppeteer-core";
 // import chromium from "chrome-aws-lambda";
 
 
@@ -24,7 +24,7 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 
 
 declare global {
-  var browser: Browser;
+  var browser: any;
 }
 
 export const browser =
