@@ -7,37 +7,41 @@ const collectProduct = async (
 ): Promise<productType[]> => {
   const page = await browser.newPage();
   try {
-    await page.setRequestInterception(true);
-    page.on("request", (request) => {
-      if (request.resourceType() === "image") request.abort();
-      else request.continue();
-    });
+    // await page.setRequestInterception(true);
+    // page.on("request", async (interceptedRequest) => {
+    //   if (interceptedRequest.resourceType() === "image") {
+    //     interceptedRequest.abort();
+    //   } else {
+    //     interceptedRequest.continue();
+    //   }
+    // });
     await page.goto(producturl, {
       // waitUntil: "networkidle2",
-      timeout: 0,
+      timeout: 5000,
     });
   } catch {
-    return [];
   }
 
   // "script"
-  // "image" 
-  // "document" 
-  // "stylesheet" 
-  // "media" 
-  // "font" 
-  // "texttrack" 
-  // "xhr" 
-  // "fetch" 
-  // "prefetch" 
-  // "eventsource" 
-  // "websocket" 
-  // "manifest" 
-  // "signedexchange" 
-  // "ping" 
-  // "cspviolationreport" 
-  // "preflight" 
+  // "image"
+  // "document"
+  // "stylesheet"
+  // "media"
+  // "font"
+  // "texttrack"
+  // "xhr"
+  // "fetch"
+  // "prefetch"
+  // "eventsource"
+  // "websocket"
+  // "manifest"
+  // "signedexchange"
+  // "ping"
+  // "cspviolationreport"
+  // "preflight"
   // "other"
+
+  console.log("after goto");
 
   const products: productType[] = await page.evaluate(() => {
     return Array.from(document.querySelectorAll("div.gridItem--Yd0sa")).map(
@@ -75,6 +79,7 @@ const collectProduct = async (
       }
     );
   });
+  page.close();
   return products;
 };
 
