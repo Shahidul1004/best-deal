@@ -59,7 +59,8 @@ export default async function handler(
   // console.log(xx);
   // console.log(xx);
 
-  // console.log(Chromium.executablePath);
+  console.log(process.env.AWS_LAMBDA_FUNCTION_VERSION);
+  
   const darazProducts =await  searchProductOnDaraz(text)
   const pickabooProducts = await searchProductOnPickaboo(text);
 
