@@ -57,8 +57,8 @@ export default async function handler(
   // console.log(xx);
   // console.log(xx);
   
-  // const darazProducts =await  searchProductOnDaraz(text)
+  const darazProducts =await  searchProductOnDaraz(text)
   const pickabooProducts = await searchProductOnPickaboo(text);
 
-  res.status(200).json({ data: pickabooProducts });
+  res.status(200).json({ data: darazProducts });
 }
