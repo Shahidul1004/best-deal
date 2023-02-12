@@ -6,7 +6,7 @@ import path from "path";
 import * as tf from "@tensorflow/tfjs";
 import { loadGraphModel } from "@tensorflow/tfjs-converter";
 import { useRouter } from "next/router";
-const MODEL_URL = "/public/model.json";
+// const MODEL_URL = "/public/model.json";
 
 import readNumpyFile from "read-npy-file";
 const fs = require("fs");
@@ -39,7 +39,7 @@ export default async function handler(
   const text = req.body.searchText;
 
   // Read the .npy file into a Buffer
-  const dataArray = readNumpyFile("public/data.npy");
+  // const dataArray = readNumpyFile("public/data.npy");
 
   // Convert the Buffer into a numpy array
   // const array = numpy.frombuffer(buffer);
