@@ -9,8 +9,8 @@ import { useRouter } from "next/router";
 // const MODEL_URL = "/public/model.json";
 
 import readNumpyFile from "read-npy-file";
-import chromium from "chrome-aws-lambda";
-import Chromium from "chrome-aws-lambda";
+// import chromium from "chrome-aws-lambda";
+// import Chromium from "chrome-aws-lambda";
 const fs = require("fs");
 
 interface ExtendedNextApiRequest extends NextApiRequest {
