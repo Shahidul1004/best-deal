@@ -1,17 +1,19 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import searchProductOnDaraz from "@/search-helpers/daraz";
-import searchProductOnPickaboo from "@/search-helpers/pickaboo";
 import type { NextApiRequest, NextApiResponse } from "next";
-import path from "path";
 import * as tf from "@tensorflow/tfjs";
 import { loadGraphModel } from "@tensorflow/tfjs-converter";
-import { useRouter } from "next/router";
-// const MODEL_URL = "/public/model.json";
 
 import readNumpyFile from "read-npy-file";
-// import chromium from "chrome-aws-lambda";
-// import Chromium from "chrome-aws-lambda";
-const fs = require("fs");
+import searchProductOnDaraz from "@/search-helpers/daraz";
+import searchProductOnPickaboo from "@/search-helpers/pickaboo";
+import searchProductOnRokomari from "@/search-helpers/rokomari";
+import searchProductOnChaldal from "@/search-helpers/chaldal";
+import searchProductOnAjkerDeal from "@/search-helpers/ajkerdeal";
+import searchProductOnClickBD from "@/search-helpers/clickBD";
+import searchProductOnOthoba from "@/search-helpers/othoba";
+import searchProductOnPriyoShop from "@/search-helpers/priyoShop";
+import searchProductOnShajgoj from "@/search-helpers/shajgoj";
+import searchProductOnBanglaShoppers from "@/search-helpers/banglaShoppers";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   protocol: any;
@@ -43,26 +45,24 @@ export default async function handler(
   // Read the .npy file into a Buffer
   // const dataArray = readNumpyFile("public/data.npy");
 
-  // Convert the Buffer into a numpy array
-  // const array = numpy.frombuffer(buffer);
-
-  // Use the numpy array
-  // const arr = dataArray.toArray();
-
-  // const baseURL = `http://${req.headers.host}`;
+  const baseURL = `http://${req.headers.host}`;
 
   // const model = await tf.loadGraphModel(baseURL + "/model.json");
-  // const model = await  tf.loadLayersModel("publicmodel.json");
-  // const cat = document.getElementById('cat')!;
+  // const model = await  tf.loadLayersModel(baseURL + "/model.json");
   // const xx = await model.execute(dataArray.toJson)
   // const values = Array.from(xx.dataSync());
   // console.log(xx);
-  // console.log(xx);
 
-  console.log(process.env.AWS_LAMBDA_FUNCTION_VERSION);
-  
-  const darazProducts =await  searchProductOnDaraz(text)
-  const pickabooProducts = await searchProductOnPickaboo(text);
+  // const darazProducts =await  searchProductOnDaraz(text)
+  // const pickabooProducts = await searchProductOnPickaboo(text);
+  // const rokomariProducts = await searchProductOnRokomari(text);
+  // const chaldalProducts = await searchProductOnChaldal(text);
+  // const ajkerDealProducts = await searchProductOnAjkerDeal(text)
+  // const clickBDProducts = await searchProductOnClickBD(text)
+  // const othobaProducts = await searchProductOnOthoba(text)
+  // const priyoShopProducts = await searchProductOnPriyoShop(text)
+  // const shajgojProducts = await searchProductOnShajgoj(text);
+  const banglaShoppersProducts = await searchProductOnBanglaShoppers(text);
 
-  res.status(200).json({ data: darazProducts });
+  res.status(200).json({ data: banglaShoppersProducts });
 }
