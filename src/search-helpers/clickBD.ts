@@ -1,4 +1,4 @@
-import { productType } from "@/types";
+import { productType, siteNames } from "@/types";
 import axios from "axios";
 import * as cheerio from "cheerio";
 
@@ -26,6 +26,7 @@ const collectBatch = async (productName: string, pageIndex: number) => {
         price,
         noOfRating: 0,
         ratingValue: 0,
+        site: siteNames[siteNames.ClickBD],
       });
     }
   });

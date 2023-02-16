@@ -32,13 +32,12 @@ type product = {
 
 type ResponseData = {
   data: {
-    site: string;
     products: product[];
   }[];
 };
 export default async function handler(
   req: ExtendedNextApiRequest,
-  res: NextApiResponse<ResponseData | any>
+  res: NextApiResponse<ResponseData>
 ) {
   const text = req.body.searchText;
 
@@ -48,21 +47,30 @@ export default async function handler(
   const baseURL = `http://${req.headers.host}`;
 
   // const model = await tf.loadGraphModel(baseURL + "/model.json");
-  // const model = await  tf.loadLayersModel(baseURL + "/model.json");
+  // const model = await  tf.loadLayersModel('https://project350-model.s3.us-west-2.amazonaws.com/rakib_ahsan/model_2/model.json');
+  // const model = await  tf.loadModel(baseURL + "/model.json");
   // const xx = await model.execute(dataArray.toJson)
   // const values = Array.from(xx.dataSync());
-  // console.log(xx);
+  // console.log(model);
 
-  // const darazProducts =await  searchProductOnDaraz(text)
-  // const pickabooProducts = await searchProductOnPickaboo(text);
-  // const rokomariProducts = await searchProductOnRokomari(text);
-  // const chaldalProducts = await searchProductOnChaldal(text);
-  // const ajkerDealProducts = await searchProductOnAjkerDeal(text)
-  // const clickBDProducts = await searchProductOnClickBD(text)
-  // const othobaProducts = await searchProductOnOthoba(text)
-  // const priyoShopProducts = await searchProductOnPriyoShop(text)
-  // const shajgojProducts = await searchProductOnShajgoj(text);
-  const banglaShoppersProducts = await searchProductOnBanglaShoppers(text);
+  const promises: Promise<any>[] = [];
 
-  res.status(200).json({ data: banglaShoppersProducts });
+  // promises.push(searchProductOnDaraz(text));
+  promises.push(searchProductOnPickaboo(text));
+  // promises.push(searchProductOnRokomari(text));
+  promises.push(searchProductOnChaldal(text));
+
+  // promises.push(searchProductOnAjkerDeal(text));
+
+  promises.push(searchProductOnClickBD(text));
+  promises.push(searchProductOnOthoba(text));
+  promises.push(searchProductOnPriyoShop(text));
+  promises.push(searchProductOnShajgoj(text));
+  promises.push(searchProductOnBanglaShoppers(text));
+
+  const allProducts = await (
+    await Promise.all(promises)
+  ).reduce((acc, cur) => [...acc, ...cur], []);
+
+  res.status(200).json({ data: allProducts });
 }

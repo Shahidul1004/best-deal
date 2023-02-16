@@ -1,4 +1,4 @@
-import { productType } from "@/types";
+import { productType, siteNames } from "@/types";
 import axios from "axios";
 import * as cheerio from "cheerio";
 
@@ -33,7 +33,15 @@ const collectBatch = async (productName: string, pageIndex: number) => {
     const noOfRating = Number(
       $(ratingSec).find("span").text().slice(1, -1) || 0
     );
-    products.push({ title, url, imgUrl, price, noOfRating, ratingValue });
+    products.push({
+      title,
+      url,
+      imgUrl,
+      price,
+      noOfRating,
+      ratingValue,
+      site: siteNames[siteNames.Rokomari],
+    });
   });
 
   return products;

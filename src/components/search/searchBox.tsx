@@ -1,9 +1,10 @@
 import { alpha, Box, InputBase, styled } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { ChangeEvent, ChangeEventHandler, useState } from "react";
-import * as os from "os";
+import { ChangeEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const SearchBox = (): JSX.Element => {
+  const router = useRouter();
   const [inputText, setInputText] = useState<string>("");
   const changeInput = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -12,15 +13,8 @@ const SearchBox = (): JSX.Element => {
   };
 
   const searchHandler = async () => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ searchText: inputText.trim().toLowerCase() }),
-    };
-    const response = await fetch(`/api/`, requestOptions);
-    const data = await response.json();
-    console.log(data);
-    console.log(os.homedir());
+    const text = inputText.trim().toLowerCase();
+    router.push(`/search/${text}`);
   };
 
   return (
@@ -49,7 +43,6 @@ const SearchSection = styled(Box)(({ theme }) => ({
   height: "75px",
   maxWidth: "80vw",
   boxSizing: "border-box",
-  margin: "1px solid green",
   padding: "10px",
   borderRadius: "8px",
   backgroundColor: alpha(theme.palette.primary.main, 0.15),

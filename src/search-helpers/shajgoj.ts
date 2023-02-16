@@ -1,7 +1,9 @@
-import { productType } from "@/types";
+import { productType, siteNames } from "@/types";
 import axios from "axios";
 
 const searchProductOnShajgoj = async (productName: string): Promise<any> => {
+  console.log("in shajgoj");
+
   const queryUrl = "https://search.shajgoj.com";
   const { data } = await axios.post(queryUrl, {
     requests: [
@@ -25,6 +27,7 @@ const searchProductOnShajgoj = async (productName: string): Promise<any> => {
       price: prod.price,
       noOfRating: prod.rating_count || 0,
       ratingValue: prod.average_rating || 0,
+      site: siteNames[siteNames.Shajgoj],
     });
   });
 

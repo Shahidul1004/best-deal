@@ -13,6 +13,7 @@ const Layout = ({ children }: { children: JSX.Element }): JSX.Element => {
         sx={{
           marginTop: "70px",
           height: "calc(100vh - 70px)",
+          width: "100vw",
         }}
       >
         {children}

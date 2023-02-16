@@ -1,4 +1,4 @@
-import { productType } from "@/types";
+import { productType, siteNames } from "@/types";
 import axios from "axios";
 import * as cheerio from "cheerio";
 
@@ -14,8 +14,7 @@ const searchProductOnPriyoShop = async (productName: string): Promise<any> => {
   const $ = cheerio.load(res.data);
   const products: productType[] = [];
   $(".product-item").each((index, elem) => {
-    const imgUrl =
-      $(elem).find("> .picture img").attr("src") || "";
+    const imgUrl = $(elem).find("> .picture img").attr("src") || "";
     const prod = $(elem).find(".product-title > a");
     const title = prod.text();
     const url = `https://priyoshop.com${prod.attr("href")}`;
@@ -26,8 +25,9 @@ const searchProductOnPriyoShop = async (productName: string): Promise<any> => {
       url,
       imgUrl,
       price,
-      noOfRating:0,
-      ratingValue:0,
+      noOfRating: 0,
+      ratingValue: 0,
+      site: siteNames[siteNames.PriyoShop],
     });
   });
   console.log(new Date().getTime() - stTime);

@@ -1,7 +1,8 @@
 // @ts-nocheck
-
+import { Puppeteer } from "puppeteer";
+import { Browser } from "puppeteer-core";
 let chrome = {};
-let puppeteer;
+let puppeteer: Puppeteer;
 let options = {};
 
 if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
@@ -22,7 +23,7 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 }
 
 declare global {
-  var browser: any;
+  var browser: Browser;
 }
 
 export const browser = global.browser || (await puppeteer.launch(options));

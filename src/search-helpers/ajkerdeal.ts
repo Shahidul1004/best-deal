@@ -1,4 +1,4 @@
-import { productType } from "@/types";
+import { productType, siteNames } from "@/types";
 import axios from "axios";
 import * as https from "https";
 
@@ -34,6 +34,7 @@ const collectBatch = async (productName: string, index: number) => {
       price: Number(prod.DealDiscountPrice),
       ratingValue: 0,
       noOfRating: 0,
+      site: siteNames[siteNames.AjkerDeal],
     });
   });
   return products;

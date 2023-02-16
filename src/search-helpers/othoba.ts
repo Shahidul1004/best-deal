@@ -1,4 +1,4 @@
-import { productType } from "@/types";
+import { productType, siteNames } from "@/types";
 import axios from "axios";
 import * as cheerio from "cheerio";
 
@@ -14,7 +14,8 @@ const searchProductOnOthoba = async (productName: string): Promise<any> => {
   const $ = cheerio.load(res.data);
   const products: productType[] = [];
   $(".product-item").each((index, elem) => {
-    const imgUrl = $(elem).find(".bs-quick-view > a > img").attr("data-src") || "";    
+    const imgUrl =
+      $(elem).find(".bs-quick-view > a > img").attr("data-src") || "";
     const prod = $(elem).find(".product-title > a");
     const title = prod.text();
     const url = `https://othoba.com${prod.attr("href")}`;
@@ -38,6 +39,7 @@ const searchProductOnOthoba = async (productName: string): Promise<any> => {
       price,
       noOfRating,
       ratingValue,
+      site: siteNames[siteNames.Othoba],
     });
   });
   console.log(new Date().getTime() - stTime);

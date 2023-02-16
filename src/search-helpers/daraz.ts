@@ -1,49 +1,18 @@
-import { productType } from "@/types";
+import { siteNames } from "@/types";
 import { browser } from "./puppeteer-client";
 
 const collectProduct = async (
   producturl: string,
   id: number
-): Promise<productType[]> => {
+): Promise<any[]> => {
   const page = await browser.newPage();
   try {
-    // await page.setRequestInterception(true);
-    // page.on("request", async (interceptedRequest) => {
-    //   if (interceptedRequest.resourceType() === "image") {
-    //     interceptedRequest.abort();
-    //   } else {
-    //     interceptedRequest.continue();
-    //   }
-    // });
     await page.goto(producturl, {
-      // waitUntil: "networkidle2",
       timeout: 5000,
     });
-  } catch {
-  }
+  } catch {}
 
-  // "script"
-  // "image"
-  // "document"
-  // "stylesheet"
-  // "media"
-  // "font"
-  // "texttrack"
-  // "xhr"
-  // "fetch"
-  // "prefetch"
-  // "eventsource"
-  // "websocket"
-  // "manifest"
-  // "signedexchange"
-  // "ping"
-  // "cspviolationreport"
-  // "preflight"
-  // "other"
-
-  console.log("after goto");
-
-  const products: productType[] = await page.evaluate(() => {
+  const products: any[] = await page.evaluate(() => {
     return Array.from(document.querySelectorAll("div.gridItem--Yd0sa")).map(
       (el) => {
         const title = el.querySelector("div.title--wFj93 a")?.textContent || "";
@@ -79,11 +48,16 @@ const collectProduct = async (
       }
     );
   });
+
   page.close();
-  return products;
+  return products.map((e) => {
+    return { ...e, site: siteNames[siteNames.Daraz] };
+  });
 };
 
 const searchProductOnDaraz = async (productName: string): Promise<any> => {
+  console.log("in daraz");
+
   const queryUrl = `https://www.daraz.com.bd/catalog/?q=${productName.replace(
     " ",
     "+"
@@ -98,7 +72,7 @@ const searchProductOnDaraz = async (productName: string): Promise<any> => {
     await Promise.all([productsRec, productsAsc, productsDesc])
   ).reduce((ac, ar) => [...ac, ...ar], []);
 
-  console.log(new Date().getTime() - stTime);
+  console.log(new Date().getTime() - stTime, "time");
   return products;
 };
 

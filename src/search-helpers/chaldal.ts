@@ -1,4 +1,4 @@
-import { productType } from "@/types";
+import { productType, siteNames } from "@/types";
 import axios from "axios";
 
 const searchProductOnChaldal = async (productName: string): Promise<any> => {
@@ -29,7 +29,15 @@ const searchProductOnChaldal = async (productName: string): Promise<any> => {
     const price = el.price;
     const noOfRating = 0;
     const ratingValue = 0;
-    products.push({ title, url, imgUrl, price, noOfRating, ratingValue });
+    products.push({
+      title,
+      url,
+      imgUrl,
+      price,
+      noOfRating,
+      ratingValue,
+      site: siteNames[siteNames.Chaldal],
+    });
   });
 
   return products;

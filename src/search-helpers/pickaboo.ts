@@ -1,4 +1,4 @@
-import { productType } from "@/types";
+import { productType, siteNames } from "@/types";
 import axios from "axios";
 
 const collectBatch = async (productName: string, itemIndex: number) => {
@@ -17,12 +17,15 @@ const collectBatch = async (productName: string, itemIndex: number) => {
       price: Number(element?.price),
       ratingValue: Number(element?.reviews_average_score),
       noOfRating: Number(element?.total_reviews),
+      site: siteNames[siteNames.Pickaboo],
     });
   });
   return products;
 };
 
 const searchProductOnPickaboo = async (productName: string): Promise<any> => {
+  console.log("in pickaboo");
+
   const stTime = new Date().getTime();
   const products: productType[] = [];
   let index = 0;
@@ -33,7 +36,7 @@ const searchProductOnPickaboo = async (productName: string): Promise<any> => {
     index += 250;
   }
   console.log(new Date().getTime() - stTime);
-  return products
+  return products;
 };
 
 export default searchProductOnPickaboo;

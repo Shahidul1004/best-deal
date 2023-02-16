@@ -11,13 +11,12 @@ const Header = (): JSX.Element => {
 export default Header;
 
 const HeaderSection = styled(Box)({
-  position: "fixed",
+  position: "relative",
   top: "0px",
-  left: "0px",
   width: "100%",
   height: "70px",
   boxSizing: "border-box",
-  backgroundColor: "red",
+  backgroundColor: "rgb(235, 243, 250)",
   boxShadow: "0px 1px 4px 0px gray",
   padding: "10px",
   paddingLeft: "30px",
