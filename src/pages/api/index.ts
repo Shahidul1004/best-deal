@@ -39,6 +39,7 @@ export default async function handler(
   req: ExtendedNextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
+  const stTime = new Date().getTime();
   const text = req.body.searchText;
 
   // Read the .npy file into a Buffer
@@ -57,20 +58,24 @@ export default async function handler(
 
   // promises.push(searchProductOnDaraz(text));
   promises.push(searchProductOnPickaboo(text));
-  // promises.push(searchProductOnRokomari(text));
+  promises.push(searchProductOnRokomari(text));
   promises.push(searchProductOnChaldal(text));
 
   // promises.push(searchProductOnAjkerDeal(text));
 
-  promises.push(searchProductOnClickBD(text));
-  promises.push(searchProductOnOthoba(text));
-  promises.push(searchProductOnPriyoShop(text));
-  promises.push(searchProductOnShajgoj(text));
-  promises.push(searchProductOnBanglaShoppers(text));
+  // promises.push(searchProductOnClickBD(text));
+  // promises.push(searchProductOnOthoba(text));
+  // promises.push(searchProductOnPriyoShop(text));
+  // promises.push(searchProductOnShajgoj(text));
+  // promises.push(searchProductOnBanglaShoppers(text));
 
   const allProducts = await (
     await Promise.all(promises)
   ).reduce((acc, cur) => [...acc, ...cur], []);
-
+  
+  console.log("DONE!!!");
+  const elapsed = new Date().getTime() - stTime;
+  console.log(`elapsed time ${elapsed}ms`);
+  
   res.status(200).json({ data: allProducts });
 }

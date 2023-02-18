@@ -59,7 +59,7 @@ const SearchPage = ({ data }: { data: productType[] }): JSX.Element => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
 
       <Topbar
         totalItems={filteredProd.length}
