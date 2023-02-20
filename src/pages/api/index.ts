@@ -14,6 +14,7 @@ import searchProductOnOthoba from "@/search-helpers/othoba";
 import searchProductOnPriyoShop from "@/search-helpers/priyoShop";
 import searchProductOnShajgoj from "@/search-helpers/shajgoj";
 import searchProductOnBanglaShoppers from "@/search-helpers/banglaShoppers";
+import { productType } from "@/types";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   protocol: any;
@@ -22,18 +23,8 @@ interface ExtendedNextApiRequest extends NextApiRequest {
   };
 }
 
-type product = {
-  title: string;
-  url: string;
-  imageUrl: string;
-  price: number;
-  rating: number;
-};
-
 type ResponseData = {
-  data: {
-    products: product[];
-  }[];
+  data: productType[];
 };
 export default async function handler(
   req: ExtendedNextApiRequest,
@@ -54,9 +45,9 @@ export default async function handler(
   // const values = Array.from(xx.dataSync());
   // console.log(model);
 
-  const promises: Promise<any>[] = [];
+  const promises: Promise<productType[]>[] = [];
 
-  // promises.push(searchProductOnDaraz(text));
+  promises.push(searchProductOnDaraz(text));
   promises.push(searchProductOnPickaboo(text));
   promises.push(searchProductOnRokomari(text));
   promises.push(searchProductOnChaldal(text));
@@ -64,18 +55,18 @@ export default async function handler(
   // promises.push(searchProductOnAjkerDeal(text));
 
   // promises.push(searchProductOnClickBD(text));
-  // promises.push(searchProductOnOthoba(text));
-  // promises.push(searchProductOnPriyoShop(text));
-  // promises.push(searchProductOnShajgoj(text));
+  promises.push(searchProductOnOthoba(text));
+  promises.push(searchProductOnPriyoShop(text));
+  promises.push(searchProductOnShajgoj(text));
   // promises.push(searchProductOnBanglaShoppers(text));
 
   const allProducts = await (
     await Promise.all(promises)
   ).reduce((acc, cur) => [...acc, ...cur], []);
-  
+
   console.log("DONE!!!");
   const elapsed = new Date().getTime() - stTime;
   console.log(`elapsed time ${elapsed}ms`);
-  
+
   res.status(200).json({ data: allProducts });
 }

@@ -6,25 +6,34 @@ import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { Context } from "@/context";
 
-const Header = ({onSearch}:{onSearch: (st: string)=> void}): JSX.Element => {
-  const [inputText, setInputText] = React.useState<string>("");
+type headerProps = {
+  inputText: string;
+  changeText: React.Dispatch<React.SetStateAction<string>>;
+  onSearch: (st: string) => void;
+};
+
+const Header = ({
+  onSearch,
+  inputText,
+  changeText,
+}: headerProps): JSX.Element => {
+  const context = React.useContext(Context);
   const changeInput = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setInputText(event.target.value);
+    changeText(event.target.value);
   };
-
-  const handleKeyDown = (event:React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") {
       event.preventDefault();
       const text = inputText.trim().toLowerCase();
-      if(text.length > 0){
-        onSearch(text)
+      if (text.length > 0) {
+        onSearch(text);
       }
-      
     }
-  }
+  };
 
   return (
     <HeaderSection>
@@ -32,7 +41,10 @@ const Header = ({onSearch}:{onSearch: (st: string)=> void}): JSX.Element => {
         variant="h6"
         noWrap
         component="div"
-        sx={{ display: { xs: "none", sm: "block" }, marginRight: { xs: "none", sm: "25px" } }}
+        sx={{
+          display: { xs: "none", sm: "block" },
+          marginRight: { xs: "none", sm: "25px" },
+        }}
       >
         Best Deal
       </Typography>
@@ -45,11 +57,13 @@ const Header = ({onSearch}:{onSearch: (st: string)=> void}): JSX.Element => {
           inputProps={{ "aria-label": "search" }}
           onKeyDown={handleKeyDown}
           onChange={changeInput}
+          value={inputText}
+          disabled={context.isLoading}
         />
       </Search>
       <Box sx={{ flexGrow: 1 }} />
       <IconButton size="large" edge="end">
-        <AccountCircle sx={{color: "white"}}/>
+        <AccountCircle sx={{ color: "white" }} />
       </IconButton>
     </HeaderSection>
   );
@@ -64,7 +78,7 @@ const HeaderSection = styled(Box)({
   height: "70px",
   boxSizing: "border-box",
   backgroundColor: "rgb(25 118 210)",
-  color: 'white',
+  color: "white",
   boxShadow: "0px 1px 4px 0px gray",
   padding: "10px 40px",
   display: "flex",

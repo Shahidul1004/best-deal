@@ -1,5 +1,6 @@
 import { productType, siteNames } from "@/types";
 import axios from "axios";
+import { validateProds } from "./search-utils";
 
 const searchProductOnChaldal = async (productName: string): Promise<any> => {
   console.log("in chaldal");
@@ -48,12 +49,13 @@ const searchProductOnChaldal = async (productName: string): Promise<any> => {
   } catch {
     error = "yes";
   }
+  const validatedProds = validateProds(products);
 
   const elapsed = new Date().getTime() - stTime;
   console.log(
-    `chaldal-->   prod: ${products.length}   time: ${elapsed}ms   APIs: 1   perAPI: ${elapsed}ms   ERROR?: ${error}`
+    `chaldal-->   prod: ${validatedProds.length}   time: ${elapsed}ms   APIs: 1   perAPI: ${elapsed}ms   ERROR?: ${error}`
   );
-  return products;
+  return validatedProds;
 };
 
 export default searchProductOnChaldal;

@@ -20,3 +20,16 @@ export enum siteNames {
   "Shajgoj",
   "BanglaShoppers",
 }
+
+export type statusType = "waiting" | "pending" | "done" | "error";
+
+export type reviewInfo = {
+  url: string;
+  status: statusType;
+  bn?: number;
+  bnP?: number;
+  bnN?: number;
+  en?: number;
+  enP?: number;
+  enN?: number;
+};

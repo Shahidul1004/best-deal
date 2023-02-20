@@ -1,6 +1,7 @@
 import { productType, siteNames } from "@/types";
 import axios from "axios";
 import * as https from "https";
+import { validateProds } from "./search-utils";
 
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 axios.defaults.httpsAgent = httpsAgent;
@@ -85,13 +86,17 @@ const searchProductOnAjkerDeal = async (
     (ac, curr) => [...curr, ...ac],
     []
   );
+  const validatedProds = validateProds(products);
+
   const elapsed = new Date().getTime() - stTime;
   console.log(
-    `ajkerdeal-->   prod: ${products.length}   time: ${elapsed}ms   APIs: ${
-      promises.length
-    }   perAPI: ${elapsed / promises.length}ms   ERROR?: ${error}`
+    `ajkerdeal-->   prod: ${
+      validatedProds.length
+    }   time: ${elapsed}ms   APIs: ${promises.length}   perAPI: ${
+      elapsed / promises.length
+    }ms   ERROR?: ${error}`
   );
-  return products;
+  return validatedProds;
 };
 
 export default searchProductOnAjkerDeal;

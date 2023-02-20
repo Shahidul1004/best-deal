@@ -2,6 +2,8 @@ import { Box, styled, Typography } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { useContext } from "react";
+import { Context } from "@/context";
 type propTypes = {
   totalItems: number;
   sortBy: number;
@@ -13,11 +15,26 @@ const Topbar = ({
   sortBy,
   changeSortBy,
 }: propTypes): JSX.Element => {
+  const context = useContext(Context);
+
   return (
     <TopbarSection>
-      <Container>
-        <Text>Total {totalItems || 0} item(s)</Text>
-        <FormControl sx={{ minWidth: 220 }}>
+      <Container
+        sx={{
+          width: `${
+            context.screenWidth >= 1360 ? "calc(100% - 250px)" : "100%"
+          }`,
+        }}
+      >
+        <Text>Total {totalItems || 0} products(s)</Text>
+        <FormControl
+          sx={{
+            minWidth: 220,
+            "& .MuiInputBase-input": {
+              padding: "10px",
+            },
+          }}
+        >
           <Select
             value={sortBy}
             onChange={(event) => changeSortBy(Number(event.target.value))}
@@ -37,7 +54,7 @@ export default Topbar;
 
 const TopbarSection = styled(Box)({
   width: "100%",
-  height: "100px",
+  height: "80px",
   position: "relative",
   display: "flex",
   flexDirection: "row",
@@ -46,7 +63,6 @@ const TopbarSection = styled(Box)({
 });
 
 const Container = styled(Box)({
-  width: "calc(100% - 200px)",
   height: "100%",
   display: "flex",
   flexDirection: "row",

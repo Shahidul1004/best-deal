@@ -1,5 +1,6 @@
 import { productType, siteNames } from "@/types";
 import axios from "axios";
+import { validateProds } from "./search-utils";
 
 let error = "no";
 const collectBatch = async (productName: string, itemIndex: number) => {
@@ -44,17 +45,18 @@ const searchProductOnPickaboo = async (productName: string): Promise<any> => {
     if (curr.length < 250 || error === "yes") break;
     index += 250;
   }
+  const validatedProds = validateProds(products);
 
   console.log("pickaboo needs to be optimized!!");
   const elapsed = new Date().getTime() - stTime;
   console.log(
     `pickaboo-->   prod: ${
-      products.length
+      validatedProds.length
     }   time: ${elapsed}ms   APIs: ${times}   perAPI: ${
       elapsed / times
     }ms   ERROR?: ${error}`
   );
-  return products;
+  return validatedProds;
 };
 
 export default searchProductOnPickaboo;

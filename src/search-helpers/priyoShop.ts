@@ -1,6 +1,7 @@
 import { productType, siteNames } from "@/types";
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { validateProds } from "./search-utils";
 
 const searchProductOnPriyoShop = async (productName: string): Promise<any> => {
   console.log("in PriyoShop");
@@ -35,12 +36,13 @@ const searchProductOnPriyoShop = async (productName: string): Promise<any> => {
   } catch {
     error = "yes";
   }
+  const validatedProds = validateProds(products);
 
   const elapsed = new Date().getTime() - stTime;
   console.log(
-    `priyoshop-->   prod: ${products.length}   time: ${elapsed}ms   APIs: 1   perAPI: ${elapsed}ms   ERROR?: ${error}`
+    `priyoshop-->   prod: ${validatedProds.length}   time: ${elapsed}ms   APIs: 1   perAPI: ${elapsed}ms   ERROR?: ${error}`
   );
-  return products;
+  return validatedProds;
 };
 
 export default searchProductOnPriyoShop;

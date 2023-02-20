@@ -1,5 +1,6 @@
 import { siteNames } from "@/types";
 import { browser } from "./puppeteer-client";
+import { validateProds } from "./search-utils";
 
 let error = "no";
 
@@ -44,7 +45,7 @@ const collectProduct = async (producturl: string): Promise<any[]> => {
 
           return {
             title,
-            url,
+            url: url.startsWith("//") ? url.slice(2) : url,
             imgUrl,
             price,
             ratingValue,
@@ -79,16 +80,17 @@ const searchProductOnDaraz = async (productName: string): Promise<any> => {
   const products = (
     await Promise.all([productsRec, productsAsc, productsDesc])
   ).reduce((ac, ar) => [...ac, ...ar], []);
+  const validatedProds = validateProds(products);
 
   const elapsed = new Date().getTime() - stTime;
   console.log(
     `daraz-->   prod: ${
-      products.length
+      validatedProds.length
     }   time: ${elapsed}ms   APIs: 3   perAPI: ${
       elapsed / 3
     }ms   ERROR?: ${error}`
   );
-  return products;
+  return validatedProds;
 };
 
 export default searchProductOnDaraz;

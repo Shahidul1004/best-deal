@@ -49,90 +49,101 @@ const PriceRange = ({
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        gap: "5px",
-      }}
-    >
-      <TextField
-        type="number"
-        InputProps={{
-          startAdornment: <InputAdornment position="start">৳</InputAdornment>,
-        }}
-        placeholder={"min"}
-        value={minPrice > 0 ? minPrice : null}
-        onChange={(e) => {
-          const value = Number(+e.target.value);
-          if (value > 0) setMinPrice(value);
-          else setMinPrice(-1);
-        }}
+    <Box>
+      <Typography
         sx={{
-          height: "33px",
-          "& .MuiInputBase-root": {
-            paddingLeft: "5px",
-          },
-          "& .MuiOutlinedInput-root": {
-            paddingRight: "5px",
-          },
-          "& .MuiOutlinedInput-input": {
-            padding: "5px 0px",
-            width: "75px",
-            ":hover": {},
-          },
+          color: "#212121",
+          fontSize: "16px",
+          marginBottom: "5px",
         }}
-      />
-      <TextField
-        type="number"
-        InputProps={{
-          startAdornment: <InputAdornment position="start">৳</InputAdornment>,
-        }}
-        placeholder={"max"}
-        value={maxPrice > 0 ? maxPrice : null}
-        onChange={(e) => {
-          const value = +e.target.value;
-          if (value > 0) setMaxPrice(value);
-          else setMaxPrice(-1);
-        }}
-        sx={{
-          height: "33px",
-          "& .MuiInputBase-root": {
-            paddingLeft: "5px",
-          },
-          "& .MuiOutlinedInput-root": {
-            paddingRight: "5px",
-          },
-          "& .MuiOutlinedInput-input": {
-            padding: "5px 0px",
-            width: "75px",
-            ":hover": {},
-          },
-        }}
-      />
-      <Button
-        sx={{
-          minWidth: "0px",
-          padding: "0px",
-          height: "33px",
-          width: "33px",
-          backgroundColor: theme.palette.primary.light,
-          ":disabled": {
-            backgroundColor: theme.palette.grey[500],
-          },
-          ":hover": {
-            backgroundColor: theme.palette.primary.main,
-          },
-        }}
-        disabled={
-          (maxPrice < minPrice && minPrice > 0 && maxPrice > 0) ||
-          (minPrice <= 0 && maxPrice <= 0)
-            ? true
-            : false
-        }
-        onClick={changePriceRangeHandler}
       >
-        <DoneIcon sx={{ color: "white" }} />
-      </Button>
+        Price Range
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          gap: "5px",
+        }}
+      >
+        <TextField
+          type="number"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">৳</InputAdornment>,
+          }}
+          placeholder={"min"}
+          value={minPrice > 0 ? minPrice : undefined}
+          onChange={(e) => {
+            const value = Number(+e.target.value);
+            if (value > 0) setMinPrice(value);
+            else setMinPrice(-1);
+          }}
+          sx={{
+            height: "33px",
+            "& .MuiInputBase-root": {
+              paddingLeft: "5px",
+            },
+            "& .MuiOutlinedInput-root": {
+              paddingRight: "5px",
+            },
+            "& .MuiOutlinedInput-input": {
+              padding: "5px 0px",
+              width: "75px",
+              ":hover": {},
+            },
+          }}
+        />
+        <TextField
+          type="number"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">৳</InputAdornment>,
+          }}
+          placeholder={"max"}
+          value={maxPrice > 0 ? maxPrice : undefined}
+          onChange={(e) => {
+            const value = +e.target.value;
+            if (value > 0) setMaxPrice(value);
+            else setMaxPrice(-1);
+          }}
+          sx={{
+            height: "33px",
+            "& .MuiInputBase-root": {
+              paddingLeft: "5px",
+            },
+            "& .MuiOutlinedInput-root": {
+              paddingRight: "5px",
+            },
+            "& .MuiOutlinedInput-input": {
+              padding: "5px 0px",
+              width: "75px",
+              ":hover": {},
+            },
+          }}
+        />
+        <Button
+          sx={{
+            minWidth: "0px",
+            padding: "0px",
+            height: "33px",
+            width: "33px",
+            backgroundColor: theme.palette.primary.light,
+            ":disabled": {
+              backgroundColor: theme.palette.grey[500],
+            },
+            ":hover": {
+              backgroundColor: theme.palette.primary.main,
+            },
+          }}
+          disabled={
+            (maxPrice < minPrice && minPrice > 0 && maxPrice > 0) ||
+            (minPrice <= 0 && maxPrice <= 0)
+              ? true
+              : false
+          }
+          onClick={changePriceRangeHandler}
+        >
+          <DoneIcon sx={{ color: "white" }} />
+        </Button>
+      </Box>
     </Box>
   );
 };
@@ -166,37 +177,47 @@ const RatingRange = ({
   prodMinRating,
 }: ratingRangePropTypes): JSX.Element => {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        gap: "2px",
-      }}
-    >
-      {prodMinRating >= 1 ? (
-        <ActiveStar onClick={() => changeProdMinRating(1)} />
-      ) : (
-        <DefaultStar onClick={() => changeProdMinRating(1)} />
-      )}
-      {prodMinRating >= 2 ? (
-        <ActiveStar onClick={() => changeProdMinRating(2)} />
-      ) : (
-        <DefaultStar onClick={() => changeProdMinRating(2)} />
-      )}
-      {prodMinRating >= 3 ? (
-        <ActiveStar onClick={() => changeProdMinRating(3)} />
-      ) : (
-        <DefaultStar onClick={() => changeProdMinRating(3)} />
-      )}
-      {prodMinRating >= 4 ? (
-        <ActiveStar onClick={() => changeProdMinRating(4)} />
-      ) : (
-        <DefaultStar onClick={() => changeProdMinRating(4)} />
-      )}
-      {prodMinRating >= 5 ? (
-        <ActiveStar onClick={() => changeProdMinRating(5)} />
-      ) : (
-        <DefaultStar onClick={() => changeProdMinRating(5)} />
-      )}
+    <Box>
+      <Typography
+        sx={{
+          color: "#212121",
+          fontSize: "16px",
+        }}
+      >
+        Min Rating
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          gap: "2px",
+        }}
+      >
+        {prodMinRating >= 1 ? (
+          <ActiveStar onClick={() => changeProdMinRating(1)} />
+        ) : (
+          <DefaultStar onClick={() => changeProdMinRating(1)} />
+        )}
+        {prodMinRating >= 2 ? (
+          <ActiveStar onClick={() => changeProdMinRating(2)} />
+        ) : (
+          <DefaultStar onClick={() => changeProdMinRating(2)} />
+        )}
+        {prodMinRating >= 3 ? (
+          <ActiveStar onClick={() => changeProdMinRating(3)} />
+        ) : (
+          <DefaultStar onClick={() => changeProdMinRating(3)} />
+        )}
+        {prodMinRating >= 4 ? (
+          <ActiveStar onClick={() => changeProdMinRating(4)} />
+        ) : (
+          <DefaultStar onClick={() => changeProdMinRating(4)} />
+        )}
+        {prodMinRating >= 5 ? (
+          <ActiveStar onClick={() => changeProdMinRating(5)} />
+        ) : (
+          <DefaultStar onClick={() => changeProdMinRating(5)} />
+        )}
+      </Box>
     </Box>
   );
 };
@@ -214,11 +235,19 @@ const SiteName = ({
     <Box
       sx={{
         display: "flex",
+        gap: "5px",
       }}
       onClick={() => onClick(siteName)}
     >
       <Checkbox {...label} checked={active} sx={{ padding: "0px" }} />
-      <Typography>{siteName}</Typography>
+      <Typography
+        sx={{
+          color: "rgb(54 49 47)",
+          fontSize: "18px",
+        }}
+      >
+        {siteName}
+      </Typography>
     </Box>
   );
 };
@@ -278,11 +307,12 @@ const Leftbar = ({
 export default Leftbar;
 
 const LeftbarSection = styled(Box)({
-  width: "300px",
+  boxSizing: "border-box",
+  width: "250px",
   height: "100%",
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
   alignItems: "flex-start",
-  gap: "10px",
+  gap: "20px",
 });

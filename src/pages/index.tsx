@@ -1,13 +1,16 @@
 import Header from "@/components/header";
 import Leftbar from "@/components/leftbar";
+import Pagination from "@/components/pagination";
 import ProdViewer from "@/components/prodViewer";
-import SearchBox from "@/components/search/searchBox";
 import Topbar from "@/components/topbar";
-import { productType, siteNames } from "@/types";
+import { Context } from "@/context";
+import { productType, reviewInfo, siteNames } from "@/types";
 import { Box, styled } from "@mui/material";
-import { useEffect, useState } from "react";
+import axios from "axios";
+import { useContext, useEffect, useRef, useState } from "react";
 
 const Home = (): JSX.Element => {
+  const [inputText, setInputText] = useState<string>("");
   const [products, setProducts] = useState<productType[]>([]);
   const [filteredProd, setFilteredProd] = useState<productType[]>([]);
   const [sortBy, setSortBy] = useState(0);
@@ -17,6 +20,11 @@ const Home = (): JSX.Element => {
   const [selectedSites, setSelectedSites] = useState(
     Object.keys(siteNames).filter((v) => isNaN(Number(v)))
   );
+  const [pageNo, setPageNo] = useState(0);
+  const [reviewInfo, setReviewInfo] = useState<reviewInfo[]>([]);
+  const prevAbortController = useRef(new AbortController());
+  const prevTaskUrl = useRef("");
+  const context = useContext(Context);
   useEffect(() => {
     const newFilter = products.filter(
       (a) =>
@@ -26,9 +34,93 @@ const Home = (): JSX.Element => {
         a.ratingValue >= rating
     );
     setFilteredProd(newFilter);
+    setPageNo(0);
   }, [sortBy, rating, minPrice, maxPrice, selectedSites, products]);
 
+  useEffect(() => {
+    if (prevTaskUrl.current.length > 0) {
+      prevTaskUrl.current = "";
+      try {
+        prevAbortController.current.abort();
+      } catch {
+        console.log("prev controller aborted");
+      }
+    }
+    (async () => {
+      const currProds = filteredProd.slice(pageNo * 10, pageNo * 10 + 10);
+      let shouldFetch: productType[] = [];
+
+      for (const prod of currProds) {
+        if (prod.site === siteNames[siteNames.Daraz]) {
+          const currentStatus = reviewInfo.find(
+            (a) => a.url === prod.url
+          )?.status;
+          if (
+            currentStatus &&
+            (currentStatus === "waiting" || currentStatus === "pending")
+          ) {
+            shouldFetch.push(prod);
+            break;
+          }
+        }
+      }
+
+      if (shouldFetch.length > 0) {
+        const controller = new AbortController();
+        prevAbortController.current = controller;
+        prevTaskUrl.current = shouldFetch[0].url;
+        try {
+          console.log("api initiated");
+
+          const res = await axios.post(
+            "api/review",
+            {
+              site: shouldFetch[0].site,
+              url: shouldFetch[0].url,
+            },
+            {
+              signal: controller.signal,
+            }
+          );
+          if (res.status === 200) {
+            prevTaskUrl.current = "";
+            const { bn, bnN, bnP, en, enN, enP } = res.data;
+            console.log("-------->", res.data);
+
+            const reviewIndex = reviewInfo.findIndex(
+              (a) => a.url === shouldFetch[0].url
+            );
+            if (reviewIndex !== -1) {
+              setReviewInfo((prev) => {
+                const temp = [...prev];
+                temp[reviewIndex] = {
+                  status: "done",
+                  url: reviewInfo[reviewIndex].url,
+                  bn,
+                  bnN,
+                  bnP,
+                  en,
+                  enN,
+                  enP,
+                };
+                return temp;
+              });
+            }
+          }
+        } catch (error: any) {
+          prevTaskUrl.current = "";
+          if (error?.name === "AbortError") {
+            console.log("Fetch aborted");
+          } else {
+            console.log("Error:", error);
+          }
+        }
+      }
+    })();
+  }, [pageNo, filteredProd, reviewInfo]);
+
   const searchHandler = async (text: string) => {
+    context.changeLoadingState(true);
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -37,9 +129,23 @@ const Home = (): JSX.Element => {
     const response = await fetch(`api/`, requestOptions);
     if (response.status === 200) {
       const { data } = await response.json();
+      const newReviewInfo: reviewInfo[] = data.reduce(
+        (acc: reviewInfo[], d: productType) => {
+          if (d?.site === siteNames[siteNames.Daraz]) {
+            acc.push({ url: d?.url, status: "waiting" });
+            return acc;
+          }
+          return acc;
+        },
+        []
+      );
+      setReviewInfo(newReviewInfo);
       setProducts(data);
+      setInputText("");
+      context.changeLoadingState(false);
     } else {
       console.log("something went wrong", response.status);
+      context.changeLoadingState(false);
     }
   };
 
@@ -66,10 +172,13 @@ const Home = (): JSX.Element => {
     });
   };
 
-
   return (
     <>
-      <Header onSearch={searchHandler} />
+      <Header
+        onSearch={searchHandler}
+        inputText={inputText}
+        changeText={setInputText}
+      />
       <Topbar
         totalItems={filteredProd.length}
         sortBy={sortBy}
@@ -87,8 +196,17 @@ const Home = (): JSX.Element => {
           changeSelectedSites={changeSelectedSiteHandler}
         />
 
-        <ProdViewer items={filteredProd} />
+        <ProdViewer
+          items={filteredProd}
+          pageIndex={pageNo}
+          reviews={reviewInfo}
+        />
       </Container>
+      <Pagination
+        totalPages={Math.ceil(filteredProd.length / 10)}
+        selectedPageIndex={pageNo}
+        changeSelectedPageIndex={setPageNo}
+      />
     </>
   );
 };
@@ -97,7 +215,7 @@ export default Home;
 
 const Container = styled(Box)({
   width: "100%",
-  height: "100%",
+  height: "calc(100% - 200px)",
   display: "flex",
   overflow: "hidden",
   overflowY: "auto",

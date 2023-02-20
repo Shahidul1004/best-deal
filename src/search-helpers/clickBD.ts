@@ -1,6 +1,7 @@
 import { productType, siteNames } from "@/types";
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { validateProds } from "./search-utils";
 
 let error = "no";
 const collectBatch = async (productName: string, pageIndex: number) => {
@@ -76,13 +77,15 @@ const searchProductOnClickBD = async (productName: string): Promise<any> => {
     (ac, curr) => [...curr, ...ac],
     []
   );
+  const validatedProds = validateProds(products);
+
   const elapsed = new Date().getTime() - stTime;
   console.log(
-    `clickbd-->   prod: ${products.length}   time: ${elapsed}ms   APIs: ${
+    `clickbd-->   prod: ${validatedProds.length}   time: ${elapsed}ms   APIs: ${
       promises.length
     }   perAPI: ${elapsed / promises.length}ms   ERROR?: ${error}`
   );
-  return products;
+  return validatedProds;
 };
 
 export default searchProductOnClickBD;

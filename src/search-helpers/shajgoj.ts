@@ -1,5 +1,6 @@
 import { productType, siteNames } from "@/types";
 import axios from "axios";
+import { validateProds } from "./search-utils";
 
 const searchProductOnShajgoj = async (productName: string): Promise<any> => {
   console.log("in shajgoj");
@@ -40,12 +41,13 @@ const searchProductOnShajgoj = async (productName: string): Promise<any> => {
   } catch {
     error = "yes";
   }
+  const validatedProds = validateProds(products);
 
   const elapsed = new Date().getTime() - stTime;
   console.log(
-    `ajkerdeal-->   prod: ${products.length}   time: ${elapsed}ms   APIs: 1   perAPI: ${elapsed}ms   ERROR?: ${error}`
+    `ajkerdeal-->   prod: ${validatedProds.length}   time: ${elapsed}ms   APIs: 1   perAPI: ${elapsed}ms   ERROR?: ${error}`
   );
-  return products;
+  return validatedProds;
 };
 
 export default searchProductOnShajgoj;
