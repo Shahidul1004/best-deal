@@ -4,7 +4,7 @@ import axios from "axios";
 const predictBatch = async (
   reviews: { original: string; cleaned: string }[]
 ): Promise<resultType[]> => {
-  const apiUrl = "http://localhost:8501/v1/models/enBERT:predict";
+  const apiUrl = "http://localhost:8601/v1/models/bnBERT:predict";
   const result: resultType[] = [];
   try {
     const response = await axios.post(
@@ -23,9 +23,9 @@ const predictBatch = async (
       const predictions: number[] = response.data?.predictions;
       predictions.map((p, idx) => {
         if (p >= 0.5)
-          result.push({ class: 1, review: reviews[idx].original, type: "en" });
+          result.push({ class: 1, review: reviews[idx].original, type: "bn" });
         else
-          result.push({ class: 0, review: reviews[idx].original, type: "en" });
+          result.push({ class: 0, review: reviews[idx].original, type: "bn" });
       });
     }
     return result;
@@ -35,7 +35,7 @@ const predictBatch = async (
   }
 };
 
-const enReviewClassification = async (
+const bnReviewClassification = async (
   reviews: { original: string; cleaned: string }[]
 ): Promise<resultType[]> => {
   const stTime = new Date().getTime();
@@ -48,7 +48,7 @@ const enReviewClassification = async (
 
   const elapsed = new Date().getTime() - stTime;
   console.log(
-    "engBERT time taken",
+    "bnBERT time taken",
     elapsed,
     "to process",
     reviews.length,
@@ -58,4 +58,4 @@ const enReviewClassification = async (
   return result;
 };
 
-export default enReviewClassification;
+export default bnReviewClassification;

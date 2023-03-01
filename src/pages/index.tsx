@@ -4,24 +4,28 @@ import Pagination from "@/components/pagination";
 import ProdViewer from "@/components/prodViewer";
 import Topbar from "@/components/topbar";
 import { Context } from "@/context";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { updateStates } from "@/redux/reducer";
 import { productType, reviewInfo, siteNames } from "@/types";
 import { Box, styled } from "@mui/material";
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 
 const Home = (): JSX.Element => {
+  const dispatch = useAppDispatch();
+  const {
+    rating,
+    searched,
+    filteredProd,
+    maxPrice,
+    minPrice,
+    pageNo,
+    products,
+    reviewInfo,
+    sortBy,
+    selectedSites,
+  } = useAppSelector((state) => state.state);
   const [inputText, setInputText] = useState<string>("");
-  const [products, setProducts] = useState<productType[]>([]);
-  const [filteredProd, setFilteredProd] = useState<productType[]>([]);
-  const [sortBy, setSortBy] = useState(0);
-  const [rating, setRating] = useState(0);
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(1000000000);
-  const [selectedSites, setSelectedSites] = useState(
-    Object.keys(siteNames).filter((v) => isNaN(Number(v)))
-  );
-  const [pageNo, setPageNo] = useState(0);
-  const [reviewInfo, setReviewInfo] = useState<reviewInfo[]>([]);
   const prevAbortController = useRef(new AbortController());
   const prevTaskUrl = useRef("");
   const context = useContext(Context);
@@ -33,9 +37,36 @@ const Home = (): JSX.Element => {
         a.price <= maxPrice &&
         a.ratingValue >= rating
     );
-    setFilteredProd(newFilter);
-    setPageNo(0);
-  }, [sortBy, rating, minPrice, maxPrice, selectedSites, products]);
+
+    let cmp = (a: productType, b: productType) => {
+      return (
+        b.ratingValue * 10 + b.noOfRating - (a.ratingValue * 10 + a.noOfRating)
+      );
+    };
+
+    if (sortBy === 1) {
+      cmp = (a: productType, b: productType) => {
+        return a.price - b.price;
+      };
+    } else if (sortBy === 2) {
+      cmp = (a: productType, b: productType) => {
+        return b.price - a.price;
+      };
+    }
+
+    const sorted = newFilter.sort(cmp);
+    let isSame = filteredProd.length === sorted.length;
+    if (isSame) {
+      for (let i = 0; i < sorted.length; i++) {
+        if (filteredProd[i].url !== sorted[i].url) {
+          isSame = false;
+          break;
+        }
+      }
+    }
+
+    if (!isSame) dispatch(updateStates({ filteredProd: sorted, pageNo: 1 }));
+  }, [sortBy, rating, minPrice, maxPrice, selectedSites, products, dispatch]);
 
   useEffect(() => {
     if (prevTaskUrl.current.length > 0) {
@@ -47,7 +78,10 @@ const Home = (): JSX.Element => {
       }
     }
     (async () => {
-      const currProds = filteredProd.slice(pageNo * 10, pageNo * 10 + 10);
+      const currProds = filteredProd.slice(
+        (pageNo - 1) * 10,
+        (pageNo - 1) * 10 + 10
+      );
       let shouldFetch: productType[] = [];
 
       for (const prod of currProds) {
@@ -65,6 +99,8 @@ const Home = (): JSX.Element => {
         }
       }
 
+      // shouldFetch.length = 0;
+
       if (shouldFetch.length > 0) {
         const controller = new AbortController();
         prevAbortController.current = controller;
@@ -77,6 +113,7 @@ const Home = (): JSX.Element => {
             {
               site: shouldFetch[0].site,
               url: shouldFetch[0].url,
+              title: shouldFetch[0].title,
             },
             {
               signal: controller.signal,
@@ -84,27 +121,32 @@ const Home = (): JSX.Element => {
           );
           if (res.status === 200) {
             prevTaskUrl.current = "";
-            const { bn, bnN, bnP, en, enN, enP } = res.data;
-            console.log("-------->", res.data);
+            const { url, status, bn, bnN, bnP, en, enN, enP, result } =
+              res.data.data;
+            console.log("-------->", res.data.data);
 
             const reviewIndex = reviewInfo.findIndex(
               (a) => a.url === shouldFetch[0].url
             );
             if (reviewIndex !== -1) {
-              setReviewInfo((prev) => {
-                const temp = [...prev];
-                temp[reviewIndex] = {
-                  status: "done",
-                  url: reviewInfo[reviewIndex].url,
-                  bn,
-                  bnN,
-                  bnP,
-                  en,
-                  enN,
-                  enP,
-                };
-                return temp;
-              });
+              const temp = [...reviewInfo];
+              temp[reviewIndex] = {
+                status: "done",
+                url: reviewInfo[reviewIndex].url,
+                title: reviewInfo[reviewIndex].title,
+                bn,
+                bnN,
+                bnP,
+                en,
+                enN,
+                enP,
+                result,
+              };
+              dispatch(
+                updateStates({
+                  reviewInfo: temp,
+                })
+              );
             }
           }
         } catch (error: any) {
@@ -117,7 +159,10 @@ const Home = (): JSX.Element => {
         }
       }
     })();
-  }, [pageNo, filteredProd, reviewInfo]);
+    return () => {
+      console.log(prevTaskUrl.current);
+    };
+  }, [pageNo, filteredProd, reviewInfo, dispatch]);
 
   const searchHandler = async (text: string) => {
     context.changeLoadingState(true);
@@ -132,44 +177,66 @@ const Home = (): JSX.Element => {
       const newReviewInfo: reviewInfo[] = data.reduce(
         (acc: reviewInfo[], d: productType) => {
           if (d?.site === siteNames[siteNames.Daraz]) {
-            acc.push({ url: d?.url, status: "waiting" });
+            acc.push({
+              url: d?.url,
+              title: d?.title,
+              status: "waiting",
+              bn: 0,
+              bnN: 0,
+              bnP: 0,
+              en: 0,
+              enN: 0,
+              enP: 0,
+              result: [],
+            });
             return acc;
           }
           return acc;
         },
         []
       );
-      setReviewInfo(newReviewInfo);
-      setProducts(data);
+      dispatch(
+        updateStates({
+          searched: true,
+          reviewInfo: newReviewInfo,
+          products: data,
+          sortBy: 0,
+          rating: 0,
+          minPrice: 0,
+          maxPrice: 1000000000,
+          selectedSites: Object.keys(siteNames).filter((v) => isNaN(Number(v))),
+          pageNo: 1,
+        })
+      );
       setInputText("");
       context.changeLoadingState(false);
     } else {
+      dispatch(updateStates({ searched: true }));
       console.log("something went wrong", response.status);
       context.changeLoadingState(false);
     }
   };
 
   const changeRatingHandler = (newRating: number) => {
-    setRating((prevRating) => {
-      if (prevRating === newRating) return 0;
-      return newRating;
-    });
+    if (rating === newRating) dispatch(updateStates({ rating: 0 }));
+    else dispatch(updateStates({ rating: newRating }));
   };
 
   const changeMinPriceHandler = (newPrice: number) => {
-    setMinPrice(newPrice);
+    dispatch(updateStates({ minPrice: newPrice }));
   };
   const changeMaxPriceHandler = (newPrice: number) => {
-    setMaxPrice(newPrice);
+    dispatch(updateStates({ maxPrice: newPrice }));
   };
   const changeSelectedSiteHandler = (siteName: string) => {
-    setSelectedSites((prevSites) => {
-      const temp = [...prevSites];
-      const index = temp.indexOf(siteName);
-      if (index === -1) temp.push(siteName);
-      else temp.splice(index, 1);
-      return temp;
-    });
+    const temp = [...selectedSites];
+    const index = temp.indexOf(siteName);
+    if (index === -1) temp.push(siteName);
+    else temp.splice(index, 1);
+    dispatch(updateStates({ selectedSites: temp }));
+  };
+  const changePageNoHandler = (newPage: number) => {
+    dispatch(updateStates({ pageNo: newPage + 1 }));
   };
 
   return (
@@ -179,34 +246,40 @@ const Home = (): JSX.Element => {
         inputText={inputText}
         changeText={setInputText}
       />
-      <Topbar
-        totalItems={filteredProd.length}
-        sortBy={sortBy}
-        changeSortBy={(newVal: number) => {
-          setSortBy(newVal);
-        }}
-      />
-      <Container>
-        <Leftbar
-          prodMinRating={rating}
-          changeProdMinRating={changeRatingHandler}
-          changeProdMinPrice={changeMinPriceHandler}
-          changeProdMaxPrice={changeMaxPriceHandler}
-          selectedSiteNames={selectedSites}
-          changeSelectedSites={changeSelectedSiteHandler}
-        />
+      {searched === false ? (
+        <></>
+      ) : (
+        <>
+          <Topbar
+            totalItems={filteredProd.length}
+            sortBy={sortBy}
+            changeSortBy={(newVal: number) => {
+              dispatch(updateStates({ sortBy: newVal }));
+            }}
+          />
+          <Container>
+            <Leftbar
+              prodMinRating={rating}
+              changeProdMinRating={changeRatingHandler}
+              changeProdMinPrice={changeMinPriceHandler}
+              changeProdMaxPrice={changeMaxPriceHandler}
+              selectedSiteNames={selectedSites}
+              changeSelectedSites={changeSelectedSiteHandler}
+            />
 
-        <ProdViewer
-          items={filteredProd}
-          pageIndex={pageNo}
-          reviews={reviewInfo}
-        />
-      </Container>
-      <Pagination
-        totalPages={Math.ceil(filteredProd.length / 10)}
-        selectedPageIndex={pageNo}
-        changeSelectedPageIndex={setPageNo}
-      />
+            <ProdViewer
+              items={filteredProd}
+              pageIndex={pageNo - 1}
+              reviews={reviewInfo}
+            />
+          </Container>
+          <Pagination
+            totalPages={Math.ceil(filteredProd.length / 10)}
+            selectedPageIndex={pageNo - 1}
+            changeSelectedPageIndex={changePageNoHandler}
+          />
+        </>
+      )}
     </>
   );
 };

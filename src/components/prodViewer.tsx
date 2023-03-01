@@ -1,7 +1,8 @@
-import { productType, reviewInfo, siteNames } from "@/types";
+import { productType, reviewDataType, reviewInfo, siteNames } from "@/types";
 import { Box, styled, Typography } from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
+import Review from "./review";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const EmptyStar = () => {
   return (
@@ -94,11 +95,15 @@ const Card = ({
   review?: reviewInfo;
 }): JSX.Element => {
   return (
-    <CardStyle href={item.url}>
-      <Image src={item.imgUrl} width={195} height={195} alt="" />
+    <CardStyle>
+      <a href={item.url} target="_blank" rel="noreferrer">
+        <Image src={item.imgUrl} width={195} height={195} alt="" />
+      </a>
       <Description>
         <TitleBox>
-          <Title>{item.title}</Title>
+          <a href={item.url} target="_blank" rel="noreferrer">
+            <Title>{item.title}</Title>
+          </a>
         </TitleBox>
         <SiteName>{item.site}</SiteName>
         <Price>৳ {item.price}</Price>
@@ -112,14 +117,33 @@ const Card = ({
           </Box>
         )}
         {item.site === siteNames[siteNames.Daraz] &&
-        review?.status === "done" ? (
-          <>
-            <Typography>total bn: {review.bn}</Typography>
-            <Typography>total positive: {review.bnP}</Typography>
-            <Typography>total negative: {review.bnN}</Typography>
-          </>
-        ) : (
-          <Typography>waiting</Typography>
+          review?.status === "done" && (
+            <Review review={review} title={item.title} url={item.url} />
+          )}
+        {item.site === siteNames[siteNames.Daraz] &&
+          review?.status !== "done" && (
+            <Box
+              sx={{
+                width: "100%",
+                height: "50px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+        {item.site !== siteNames[siteNames.Daraz] && (
+          <Box
+            sx={{
+              width: "100%",
+              height: "50px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          ></Box>
         )}
       </Description>
     </CardStyle>
@@ -155,7 +179,6 @@ export default ProdViewer;
 
 const Container = styled(Box)({
   width: "1150px",
-  // height: "100%",
   display: "flex",
   flexFlow: "row wrap",
   justifyContent: "space-evenly",
@@ -164,7 +187,7 @@ const Container = styled(Box)({
   marginBottom: "30px",
 });
 
-const CardStyle = styled(Link)({
+const CardStyle = styled(Box)({
   boxSizing: "border-box",
   height: "235px",
   width: "525px",
@@ -173,8 +196,6 @@ const CardStyle = styled(Link)({
   display: "flex",
   justifyContent: "space-evenly",
   alignItems: "center",
-  cursor: "pointer",
-  target: "_blank",
 });
 
 const Description = styled(Box)({
@@ -182,13 +203,13 @@ const Description = styled(Box)({
   width: "290px",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "flex-start",
+  justifyContent: "space-evenly",
   alignItems: "flex-start",
 });
 
 const TitleBox = styled(Box)({
   width: "100%",
-  maxHeight: "72px",
+  maxHeight: "40px",
   overflow: "hidden",
   wordWrap: "break-word",
   textOverflow: "clip",
@@ -198,6 +219,7 @@ const Title = styled(Typography)({
   fontSize: "16px",
   fontWeight: "500",
   color: "#333333",
+  lineHeight: "1.25",
 });
 
 const Rater = styled(Typography)({

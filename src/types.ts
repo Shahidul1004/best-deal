@@ -25,11 +25,24 @@ export type statusType = "waiting" | "pending" | "done" | "error";
 
 export type reviewInfo = {
   url: string;
+  title: string;
   status: statusType;
-  bn?: number;
-  bnP?: number;
-  bnN?: number;
-  en?: number;
-  enP?: number;
-  enN?: number;
+  bn: number;
+  bnP: number;
+  bnN: number;
+  en: number;
+  enP: number;
+  enN: number;
+  result: {
+    review: string;
+    sentiment: string;
+    type: string;
+  }[];
+};
+
+export type resultType = { review: string; class: number; type: string };
+
+export type reviewDataType = {
+  title: string;
+  reviews: { review: string; sentiment: string; type: string }[];
 };

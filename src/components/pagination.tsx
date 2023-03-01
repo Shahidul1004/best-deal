@@ -9,7 +9,7 @@ import FastRewindIcon from "@mui/icons-material/FastRewind";
 type propTypes = {
   totalPages: number;
   selectedPageIndex: number;
-  changeSelectedPageIndex: React.Dispatch<React.SetStateAction<number>>;
+  changeSelectedPageIndex: (newPage: number) => void;
 };
 
 const Pagination = ({
