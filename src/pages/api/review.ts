@@ -33,7 +33,7 @@ export default async function handler(
 
   const reviews: string[] = [];
 
-  const queryUrl = `https://my.daraz.com.bd/pdp/review/getReviewList?itemId=${itemId}&pageSize=10000&filter=0&sort=0&pageNo=0`;
+  const queryUrl = `https://my.daraz.com.bd/pdp/review/getReviewList?itemId=${itemId}&pageSize=500&filter=0&sort=0&pageNo=1`;
   try {
     const response = await axios.get(queryUrl, { timeout: 60000 });
     if (response.status === 200) {
@@ -57,23 +57,17 @@ export default async function handler(
       enReviews.push({ original: review, cleaned: cleaned });
     } else {
       bnReviews.push({ original: review, cleaned: cleaned });
-      // const lst = cleaned.split(" ");
-      // const removeStop: string[] = [];
-      // for (const word of lst) {
-      //   if (!stop_words.includes(word)) removeStop.push(word);
-      // }
-      // bnReviews.push(removeStop.join(" "));
     }
   }
 
-  console.log(enReviews.length, bnReviews.length);
+  console.log("product:", title, "enReview:", enReviews.length, "bnReview:", bnReviews.length);
 
   const result = (
     await Promise.all([
-      enReviewClassification(enReviews),
-      bnReviewClassification(bnReviews),
-      // enReviewClassification(enReviews.slice(0, 3)),
-      // bnReviewClassification(bnReviews.slice(0, 3)),
+      // enReviewClassification(enReviews),
+      // bnReviewClassification(bnReviews),
+      enReviewClassification(enReviews.slice(0, 50)),
+      bnReviewClassification(bnReviews.slice(0, 50)),
     ])
   ).reduce((acc, cur) => [...acc, ...cur], []);
 

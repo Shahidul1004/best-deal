@@ -26,7 +26,7 @@ const searchProductOnChaldal = async (productName: string): Promise<any> => {
         filters: [],
         maxOutOfStockCount: { case: "Some", fields: [5] },
       },
-      { timeout: 60000 }
+      { timeout: 15000 }
     );
 
     data.hits.map((el: any) => {

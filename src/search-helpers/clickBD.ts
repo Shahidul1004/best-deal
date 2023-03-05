@@ -12,7 +12,7 @@ const collectBatch = async (productName: string, pageIndex: number) => {
   const products: productType[] = [];
 
   try {
-    const res = await axios.get(queryUrl);
+    const res = await axios.get(queryUrl, {timeout: 8000});
     const $ = cheerio.load(res.data);
 
     $("#view > .sh").each((index, elem) => {
@@ -49,7 +49,7 @@ const getNoOfProducts = async (productName: string) => {
       " ",
       "%20"
     )}`;
-    const res = await axios.get(queryUrl, { timeout: 60000 });
+    const res = await axios.get(queryUrl, { timeout: 10000 });
     const $ = cheerio.load(res.data);
 
     const pagin = $(".pagination").children("li");
@@ -69,9 +69,9 @@ const searchProductOnClickBD = async (productName: string): Promise<any> => {
   const totalProduts = await getNoOfProducts(productName);
   const promises: Promise<productType[]>[] = [];
 
-  for (let i = 0; i <= totalProduts; i += 30) {
+  for (let i = 0; i <= Math.min(totalProduts, 300); i += 30) {
     promises.push(collectBatch(productName, i));
-    break;
+    // break;
   }
   const products = (await Promise.all(promises)).reduce(
     (ac, curr) => [...curr, ...ac],

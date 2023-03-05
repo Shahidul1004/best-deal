@@ -37,7 +37,7 @@ export default async function handler(
   promises.push(searchProductOnRokomari(text));
   promises.push(searchProductOnChaldal(text));
 
-  // promises.push(searchProductOnAjkerDeal(text));
+  promises.push(searchProductOnAjkerDeal(text));
 
   promises.push(searchProductOnClickBD(text));
   promises.push(searchProductOnOthoba(text));

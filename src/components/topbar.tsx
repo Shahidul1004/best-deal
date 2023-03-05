@@ -24,6 +24,7 @@ const Topbar = ({
           width: `${
             context.screenWidth >= 1360 ? "calc(100% - 250px)" : "100%"
           }`,
+          paddingRight: "20px"
         }}
       >
         <Text>Total {totalItems || 0} products(s)</Text>

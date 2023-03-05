@@ -7,9 +7,11 @@ import { Context } from "@/context";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateStates } from "@/redux/reducer";
 import { productType, reviewInfo, siteNames } from "@/types";
-import { Box, styled } from "@mui/material";
+import { Box, styled, Typography } from "@mui/material";
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Home = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -247,7 +249,24 @@ const Home = (): JSX.Element => {
         changeText={setInputText}
       />
       {searched === false ? (
-        <></>
+        <Box
+          sx={{
+            width: `${context.screenWidth >= 1360 ? "1360px" : "850px"}`,
+            height: "calc(100% - 200px)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "36px",
+              color: "#8080807d",
+            }}
+          >
+            Discover your best deal
+          </Typography>
+        </Box>
       ) : (
         <>
           <Topbar
@@ -279,6 +298,30 @@ const Home = (): JSX.Element => {
             changeSelectedPageIndex={changePageNoHandler}
           />
         </>
+      )}
+      {context.isLoading && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "70px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Backdrop
+            sx={{
+              position: "relative",
+              color: "#fff",
+              zIndex: (theme) => theme.zIndex.drawer + 1,
+              width: context.screenWidth >= 1360 ? "1360px" : "850px",
+              height: "calc(100vh - 70px)",
+            }}
+            open={context.isLoading}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        </Box>
       )}
     </>
   );

@@ -94,6 +94,8 @@ const Card = ({
   item: productType;
   review?: reviewInfo;
 }): JSX.Element => {
+  console.log(item.imgUrl);
+  
   return (
     <CardStyle>
       <a href={item.url} target="_blank" rel="noreferrer">
@@ -183,6 +185,7 @@ const Container = styled(Box)({
   flexFlow: "row wrap",
   justifyContent: "space-evenly",
   alignItems: "center",
+  alignContent: "flex-start",
   gap: "10px",
   marginBottom: "30px",
 });

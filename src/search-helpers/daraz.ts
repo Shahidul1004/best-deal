@@ -9,7 +9,7 @@ const collectProduct = async (producturl: string): Promise<any[]> => {
   const products: any[] = [];
   try {
     await page.goto(producturl, {
-      timeout: 5000,
+      timeout: 6000,
     });
   } catch {}
 
@@ -45,7 +45,12 @@ const collectProduct = async (producturl: string): Promise<any[]> => {
 
           return {
             title,
-            url: url.startsWith("//") ? url.slice(2) : url,
+            url:
+              "https://" +
+              url
+                .replace("http://", "")
+                .replace("https://", "")
+                .replace("//", ""),
             imgUrl,
             price,
             ratingValue,
@@ -70,7 +75,7 @@ const searchProductOnDaraz = async (productName: string): Promise<any> => {
 
   const queryUrl = `https://www.daraz.com.bd/catalog/?q=${productName.replace(
     " ",
-    "+"
+    "%20"
   )}`;
 
   const productsRec = collectProduct(queryUrl);

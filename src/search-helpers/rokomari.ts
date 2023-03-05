@@ -7,12 +7,12 @@ let error = "no";
 const collectBatch = async (productName: string, pageIndex: number) => {
   const queryUrl = `https://www.rokomari.com/search?term=${productName.replace(
     " ",
-    "%20"
+    "+"
   )}&page=${pageIndex}`;
   const products: productType[] = [];
 
   try {
-    const res = await axios.get(queryUrl, { timeout: 60000 });
+    const res = await axios.get(queryUrl, { timeout: 10000 });
     const $ = cheerio.load(res.data);
 
     $(".book-list-wrapper > a").each((index, elem) => {
@@ -60,10 +60,10 @@ const collectBatch = async (productName: string, pageIndex: number) => {
 const getNoOfProducts = async (productName: string) => {
   const queryUrl = `https://www.rokomari.com/search?term=${productName.replace(
     " ",
-    "%20"
+    "+"
   )}`;
   try {
-    const res = await axios.get(queryUrl, { timeout: 60000 });
+    const res = await axios.get(queryUrl, { timeout: 10000 });
     const $ = cheerio.load(res.data);
     return (
       Number($(".browse__content--heading .row div p").text().split(" ")[6]) ||
@@ -83,7 +83,7 @@ const searchProductOnRokomari = async (productName: string): Promise<any> => {
 
   const promises: Promise<productType[]>[] = [];
 
-  for (let i = 1; i <= totalPage; i++) {
+  for (let i = 1; i <= Math.min(totalPage, 30); i++) {
     promises.push(collectBatch(productName, i));
   }
   const products = (await Promise.all(promises)).reduce(

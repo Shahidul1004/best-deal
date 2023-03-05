@@ -26,7 +26,7 @@ const searchProductOnBanglaShoppers = async (
           },
         ],
       },
-      { timeout: 60000 }
+      { timeout: 15000 }
     );
     const hits: unknown[] = data.results[0].hits;
     hits.map((prod: any) => {

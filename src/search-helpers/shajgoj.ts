@@ -23,7 +23,7 @@ const searchProductOnShajgoj = async (productName: string): Promise<any> => {
           },
         ],
       },
-      { timeout: 60000 }
+      { timeout: 15000 }
     );
 
     const hits: unknown[] = data.results[0].hits;
@@ -45,7 +45,7 @@ const searchProductOnShajgoj = async (productName: string): Promise<any> => {
 
   const elapsed = new Date().getTime() - stTime;
   console.log(
-    `ajkerdeal-->   prod: ${validatedProds.length}   time: ${elapsed}ms   APIs: 1   perAPI: ${elapsed}ms   ERROR?: ${error}`
+    `shajgoj-->   prod: ${validatedProds.length}   time: ${elapsed}ms   APIs: 1   perAPI: ${elapsed}ms   ERROR?: ${error}`
   );
   return validatedProds;
 };

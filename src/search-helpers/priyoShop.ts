@@ -14,7 +14,7 @@ const searchProductOnPriyoShop = async (productName: string): Promise<any> => {
   )}`;
   const products: productType[] = [];
   try {
-    const res = await axios.get(queryUrl, { timeout: 60000 });
+    const res = await axios.get(queryUrl, { timeout: 15000 });
     const $ = cheerio.load(res.data);
     $(".product-item").each((index, elem) => {
       const imgUrl = $(elem).find("> .picture img").attr("src") || "";

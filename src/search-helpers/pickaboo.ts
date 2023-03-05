@@ -11,7 +11,7 @@ const collectBatch = async (productName: string, itemIndex: number) => {
   const products: productType[] = [];
 
   try {
-    const res = await axios.get(queryUrl, { timeout: 60000 });
+    const res = await axios.get(queryUrl, { timeout: 10000 });
     const data: any[] = res.data.items;
     data.forEach((element) => {
       products.push({
@@ -35,25 +35,39 @@ const searchProductOnPickaboo = async (productName: string): Promise<any> => {
   console.log("in pickaboo");
   const stTime = new Date().getTime();
 
-  const products: productType[] = [];
-  let index = 0;
-  let times = 0;
-  while (1) {
-    const curr = await collectBatch(productName, index);
-    products.push(...curr);
-    times += 1;
-    if (curr.length < 250 || error === "yes") break;
-    index += 250;
-  }
-  const validatedProds = validateProds(products);
+  // const products: productType[] = [];
 
-  console.log("pickaboo needs to be optimized!!");
+  const batch1 = collectBatch(productName, 0)
+  // const batch2 = collectBatch(productName, 0)
+  // const batch3 = collectBatch(productName, 0)
+  // const batch4 = collectBatch(productName, 0)
+
+  const products = (
+    await Promise.all([batch1])
+  ).reduce((ac, ar) => [...ac, ...ar], []);
+
+  // products.push(collectBatch(productName, 0))
+
+
+  // let index = 0;
+  // let times = 0;
+  // while (1) {
+  //   const curr = await collectBatch(productName, index);
+  //   products.push(...curr);
+  //   times += 1;
+  //   if (curr.length < 250 || error === "yes" || times >= 4) break;
+  //   index += 250;
+  // }
+  const validatedProds = validateProds(
+    products.filter((a) => !a.url.includes("/catalog/"))
+  );
+
   const elapsed = new Date().getTime() - stTime;
   console.log(
     `pickaboo-->   prod: ${
       validatedProds.length
-    }   time: ${elapsed}ms   APIs: ${times}   perAPI: ${
-      elapsed / times
+    }   time: ${elapsed}ms   APIs: ${4}   perAPI: ${
+      elapsed / 4
     }ms   ERROR?: ${error}`
   );
   return validatedProds;

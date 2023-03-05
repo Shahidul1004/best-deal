@@ -412,8 +412,8 @@ const removeDup = (items: productType[]): productType[] => {
 
 const validateProds = (items: productType[]): productType[] => {
   const unique = removeDup(items);
-
-  return unique;
+  const validMinPrice = unique.filter(p => p.price > 0)
+  return validMinPrice;
 };
 
 const cleanText = (text: string) => {

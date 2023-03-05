@@ -17,7 +17,7 @@ const collectBatch = async (productName: string, index: number) => {
         priceLowerLim: 0,
         priceUpperLim: 9999999,
       },
-      { timeout: 60000 }
+      { timeout: 10000 }
     );
 
     const products: productType[] = [];
@@ -61,7 +61,7 @@ const getNoOfProducts = async (productName: string, index: number) => {
         priceLowerLim: 0,
         priceUpperLim: 9999999,
       },
-      { timeout: 60000 }
+      { timeout: 10000 }
     );
     return res.data.Total || 0;
   } catch {
@@ -79,7 +79,7 @@ const searchProductOnAjkerDeal = async (
   const totalProduts = await getNoOfProducts(productName, 0);
   const promises: Promise<productType[]>[] = [];
 
-  for (let i = 0; i <= totalProduts; i += 10) {
+  for (let i = 0; i <= Math.min(totalProduts, 400); i += 10) {
     promises.push(collectBatch(productName, i));
   }
   const products = (await Promise.all(promises)).reduce(

@@ -23,9 +23,11 @@ const Review = (): JSX.Element => {
     if (keys[i] !== "slug") params = params + "&" + keys[i] + "=" + values[i];
   }
   url = url + "?" + params.replace("&", "");
+  url = url.replace("https:/", "https://").replace("http:/", "http://")
 
   const { reviewInfo } = useAppSelector((state) => state.state);
-  const reviewData = reviewInfo.find((r: any) => r.url === url);
+  const reviewData = reviewInfo.find((r) => r.url === url);
+
   if (!reviewData) {
     return <></>;
   }
