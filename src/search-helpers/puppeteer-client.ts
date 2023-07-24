@@ -9,6 +9,7 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
   chrome = require("chrome-aws-lambda");
   puppeteer = require("puppeteer-core");
 
+  
   // const browserFetcher = puppeteer.createBrowserFetcher();
   // const revisionInfo = await browserFetcher.download('843427.');
   options = {
